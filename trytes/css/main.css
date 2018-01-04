@@ -1,0 +1,51 @@
+body {
+    background-color: #f8fffe;
+    font-family: "Tahoma";
+    margin: 0px;
+    padding:0px;
+  }
+  p {
+    margin: 0px;
+    padding:0px;
+    
+  }
+  
+  .header {
+    background-color: #04a997;
+    height: 70px;
+  }
+  .pagetitle {
+    top: 20px;
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+  }
+  .pagesubtitle {
+    font-size: small;
+    font-weight: bold;
+    text-align: center;
+  }
+  .content {
+    /* background-color: cyan; */
+    max-width: 700px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .article {
+    padding-top: 25px;
+  }
+  .title {
+    padding-top: 25px;
+    padding-bottom: 15px;
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+  }
+  .leftpane {
+    float: left;
+  }
+  .rightpane {
+    float: right;
+  }
+  

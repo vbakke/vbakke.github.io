@@ -1,0 +1,48 @@
+<html>
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" /></script>
+  <script src="js/main.js"></script>
+  <script src="js/trytes.js"></script>
+  <link rel="stylesheet" href="./css/main.css" type="text/css" media="all">
+</head>
+
+<body>
+  <div class="header">
+    <div style="height: 10px"> </div>
+    <div class="pagetitle">Trytes and Bytes</div>
+    <div class="pagesubtitle">How to fit the square peg in the round hole</div>
+  </div>
+  <div class="content">
+    <div class="article">
+      <div class="title">Native Unicode text</div>
+      <div class="leftpane">
+        <p>Native Unicode text:</p>
+        <textarea id="txtUnicodeNative" cols=40 rows=8 autofocus></textarea>
+      </div>
+      <div class="rightpane">
+        <p>Encoded as tryte string:</p>
+        <textarea id="txtUnicodeEncoded" cols=40 rows=8 autofocus></textarea>
+      </div>
+      <div style="clear: both" />
+      <p>Native Unicode text, such as IOTA messages, etc.</p>
+    </div>
+    <div class="article">
+      <div class="title">Native tryte string</div>
+      <div class="leftpane">
+        <p>Native tryte string:</p>
+        <textarea id="txtTrytesNative" cols=40 rows=8 autofocus></textarea>
+      </div>
+      <div class="rightpane">
+        <p>Encoded as bytes:</p>
+        <textarea id="txtTrytesEncoded" cols=40 rows=8 autofocus></textarea>
+      </div>
+      <div style="clear: both" />
+      <p>Native tryte strings, such as IOTA seeds addresses, etc.</p>
+      <p>&nbsp;</p>
+      <p style="font-style: italic">NB! Don't insert your actual IOTA seeds here, unless you do it offline in a secure environment.</p>
+    </div>
+  </div>
+</body>
+
+</html>

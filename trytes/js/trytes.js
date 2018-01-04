@@ -1,0 +1,1 @@
+C:/Users/Vegard/Documents/src/GIT/trytes/src/trytes.js
