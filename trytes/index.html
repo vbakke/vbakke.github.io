@@ -18,27 +18,28 @@
       <div class="title">Native Unicode text</div>
       <div class="leftpane">
         <p>Native Unicode text:</p>
-        <textarea id="txtUnicodeNative" cols=40 rows=8 autofocus></textarea>
+        <textarea id="txtUnicodeNative" class="box bytes" cols=30 rows=8 autofocus>Hello</textarea>
       </div>
       <div class="rightpane">
-        <p>Encoded as tryte string:</p>
-        <textarea id="txtUnicodeEncoded" cols=40 rows=8 autofocus></textarea>
+        <p>Encoded as tryte6 string:</p>
+        <textarea id="txtUnicodeEncoded" class="box trytes"  cols=30 rows=8>RBTC9D9DCD</textarea>
       </div>
       <div style="clear: both" />
-      <p>Native Unicode text, such as IOTA messages, etc.</p>
+      <p>Native Unicode text uses all bytes values, from 0 to 255, and can be converted to two tryte3 letters (9+A-Z).</p>
+      <img style="margin-left:auto;margin-right:auto;display:block" src="./images/square_peg_in_a_round_hole.png">
     </div>
     <div class="article">
       <div class="title">Native tryte string</div>
       <div class="leftpane">
-        <p>Native tryte string:</p>
-        <textarea id="txtTrytesNative" cols=40 rows=8 autofocus></textarea>
+        <p>Native tryte3 string:</p>
+        <textarea id="txtTrytesNative" class="box trytes"  cols=30 rows=8>99AZZ</textarea>
       </div>
       <div class="rightpane">
         <p>Encoded as bytes:</p>
-        <textarea id="txtTrytesEncoded" cols=40 rows=8 autofocus></textarea>
+        <textarea id="txtTrytesEncoded" class="box bytes" cols=30 rows=8>0,165,242</textarea>
       </div>
       <div style="clear: both" />
-      <p>Native tryte strings, such as IOTA seeds addresses, etc.</p>
+      <p>Native tryte3 strings, shifted to tryte5 arrays, before encoded as bytes.</p>
       <p>&nbsp;</p>
       <p style="font-style: italic">NB! Don't insert your actual IOTA seeds here, unless you do it offline in a secure environment.</p>
     </div>

@@ -1,16 +1,18 @@
 body {
+    color: #04a997;
     background-color: #f8fffe;
     font-family: "Tahoma";
+    font-size: 14px;
     margin: 0px;
     padding:0px;
   }
   p {
     margin: 0px;
-    padding:0px;
-    
+    padding:10px 0 5px 0;
   }
   
   .header {
+    color: black;
     background-color: #04a997;
     height: 70px;
   }
@@ -47,5 +49,23 @@ body {
   }
   .rightpane {
     float: right;
+  }
+  textarea.box {
+    border: 2px;
+    border-style: solid;   
+    font-size: 18px;
+  }
+  textarea.bytes {
+    color: #4472c4;
+    font-weight: bold;
+    border-color: #4472c4;   
+    background-color: #f1f3f7;
+  }
+  textarea.trytes {
+    color: #ed7d31;
+    font-weight: bold;
+    border-color: #ed7d31;
+    background-color: #fff7f1;
+    border-radius: 10px;   
   }
   
