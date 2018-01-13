@@ -34,7 +34,10 @@
      */
 
     const TRYTE_CHARS = '9ABCDEFGHIJKLMNOPQRSTUVWXYZ';         // All legal tryte3 characters
-    const POWEROF3 = [1, 3, 9, 27, 3 * 27, 9 * 27, 27 * 27];   // Pre calculated 3^i
+    const POWEROF = [[], [], 
+        [1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+        [1, 3, 9, 27, 3 * 27, 9 * 27, 27 * 27] ];   // Pre calculated 3^i
+    //const POWEROF3 = [1, 3, 9, 27, 3 * 27, 9 * 27, 27 * 27];   // Pre calculated 3^i
 
 
     const encodingMap_Buffer = {
@@ -54,7 +57,10 @@
     /**
      * Encode bytes as tryte6 characters in a string
      * 
-     * With some minor adjustments, it is basically a copy of:
+     * This compressed version shifts byte 8, to byte6, 
+     * before encoding as tryte4, and then shifted to tryte6
+     * 
+     * Use encodeBytesAsTryteStringLegacy() for the
      *    iota.lib.js asciiToTrytes.js toTrytes()
      * 
      * Not to be confused with decodeTryteStringFromBytes().
@@ -63,16 +69,21 @@
      * 
      * @returns a tryte6 string (having 2 tryte chars representing each byte)
      */
-    trytes.encodeBytesAsTryteString = function (bytes) {
+    trytes.encodeBytesAsTryteString = function (bytes8) {
+        var bytes6 = _shiftValueArray(bytes8, 2, 8, 6);
+        var trytes4 = bytes6;
+        var trytes3 = _shiftValueArray(trytes4, 3, 4, 3);
+        var trytes = convertTryte3ValuesToChars(trytes3);
+
+
+        return trytes;
+    }
+    trytes.encodeBytesAsTryteStringLegacy = function (bytes) {
         var trytes = "";
 
         for (var i = 0; i < bytes.length; i++) {
             var value = bytes[i];
 
-            // If outside bounderies of a byte, return null
-            if (value > 255) {
-                return null;
-            }
 
             var firstValue = value % 27;
             var secondValue = (value - firstValue) / 27;
@@ -144,7 +155,7 @@
         if (!tryte3Values)
             return null;
             
-        let tryte5Values = _shiftTrytes(tryte3Values, 3, 5);
+        let tryte5Values = _shiftValueArray(tryte3Values, 3, 3, 5);
 
         return new Uint8Array(tryte5Values);
     }
@@ -164,7 +175,7 @@
      * @returns A tryte3 string, containing only characters (9 + A-Z)
      */
     trytes.decodeTryteStringFromBytes = function(bytes) {
-        let tryte3Values = _shiftTrytes(bytes, 5, 3);
+        let tryte3Values = _shiftValueArray(bytes, 3, 5, 3);
 
         let tryte3Str = convertTryte3ValuesToChars(tryte3Values);
         return tryte3Str;
@@ -193,6 +204,20 @@
      * 
      * @returns A tryte3 string, containing only characters (9 + A-Z)
      */
+    trytes.encodeTextAsTryteStringLegacy = function (text, encoding) {
+        if (typeof encoding === 'undefined') {
+            encoding = selectBestEncoding(text);
+        }
+
+        let bytes = trytes.encodeTextAsBytes(text, encoding);
+        let tryte3Str = trytes.encodeBytesAsTryteStringLegacy(bytes);
+
+        let bom = getBomFromEncoding(encoding);
+        if (bom)
+            tryte3Str = bom + tryte3Str;
+
+        return tryte3Str;
+    }
     trytes.encodeTextAsTryteString = function (text, encoding) {
         if (typeof encoding === 'undefined') {
             encoding = selectBestEncoding(text);
@@ -271,6 +296,14 @@
     }
 
 
+    function initializePowerOf(base, exponent) {
+        if (! base in POWEROF)
+            POWEROF[base] = [1];
+        
+        for (var i = POWEROF[base].length; i<=exponent; i++) {
+            POWEROF[base].push( POWEROF[base][i-1] * base);
+        }
+    }
 
     /**
      * Shifting trits in arrays of tryte values, e.g. from tryte3 to tryte5, or vice versa
@@ -281,35 +314,41 @@
      * 
      * @returns an array of tryte values
      */
-    function _shiftTrytes(fromArray, sizeFrom, sizeTo) {
+    function _shiftValueArray(fromArray, base, sizeFrom, sizeTo) {
         let toArray = [];
         let trits = 0;
         let tmpTryte = 0;
         let padding = 0;
+        if (! (base in POWEROF && sizeFrom in POWEROF[base] && sizeTo in POWEROF[base]))
+            initializePowerOf(base, Math.max(sizeFrom, sizeTo));
 
         for (let i = 0; i < fromArray.length; i++) {
             // Verify boundaries (exception for the last element)
-            if (fromArray[i] > POWEROF3[sizeFrom]) {
-                padding = fromArray[i];
+            if (fromArray[i] < 0 || fromArray[i] > POWEROF[base][sizeFrom]) {
+                if (fromArray[i] < 0 ) {
+                    padding = fromArray[i];
+                } else {
+                    padding = POWEROF[base][sizeFrom] - fromArray[i];
+                }
                 break;
             }
 
             // Add new trits into the tryte
-            let factor = POWEROF3[trits]; // = 3^trits
+            let factor = POWEROF[base][trits]; // = 3^trits
             trits += sizeFrom;
             tmpTryte += fromArray[i] * factor;
 
             // If more 
             while (trits >= sizeTo) {
-                let tryte = tmpTryte % POWEROF3[sizeTo];
-                tmpTryte = (tmpTryte - tryte) / POWEROF3[sizeTo];
+                let tryte = tmpTryte % POWEROF[base][sizeTo];
+                tmpTryte = (tmpTryte - tryte) / POWEROF[base][sizeTo];
                 trits -= sizeTo;
                 toArray.push(tryte);
             }
         }
         while (trits > 0) {
-            let newTryte = tmpTryte % POWEROF3[sizeTo];
-            tmpTryte = (tmpTryte - newTryte) / POWEROF3[sizeTo];
+            let newTryte = tmpTryte % POWEROF[base][sizeTo];
+            tmpTryte = (tmpTryte - newTryte) / POWEROF[base][sizeTo];
             trits -= sizeTo;
             toArray.push(newTryte);
         }
@@ -318,12 +357,13 @@
         if (sizeTo > sizeFrom) {
             // If going up in size, a padding code may be added at the end
             if (trits < 0) {
-                toArray.push(POWEROF3[sizeTo] - Math.floor(trits / sizeFrom));
+                //toArray.push(POWEROF[base][sizeTo] - Math.floor(trits / sizeFrom));
+                toArray.push(Math.floor(trits / sizeFrom));
             }
         } else {
             // When going down in size, check if any padding characters should be removed
             if (padding != 0) {
-                let skip = padding - POWEROF3[sizeFrom];
+                let skip = -padding; // - POWEROF[base][sizeFrom];
                 //console.log("skip last ", (skip), "chars");
                 toArray = toArray.slice(0, -skip);
             }
@@ -366,13 +406,16 @@
         for (let i = 0; i < tryte3Values.length; i++) {
             value = tryte3Values[i];
             if (value < 0 || value >= TRYTE_CHARS.length)
-                return null;
+            return null;
             tryte3Str += TRYTE_CHARS[value];
         }
         return tryte3Str;
     }
-
-
+    function convertTryte6ValuesToChars(tryte6Values) {
+        return trytes.encodeBytesAsTryteStringLegacy(tryte6Values);
+    }
+    
+    
 
     /**
      * Select encoding based on the given text

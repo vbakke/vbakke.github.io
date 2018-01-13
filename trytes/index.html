@@ -15,18 +15,31 @@
   </div>
   <div class="content">
     <div class="article">
-      <div class="title">Native Unicode text</div>
-      <div class="leftpane">
-        <p>Native Unicode text:</p>
+      <div class="title">Native Unicode strings</div>
+      <div class="pane leftpane">
+        <p>Native Unicode text (<span id="lenUnicodeBytes"></span> chars):</p>
         <textarea id="txtUnicodeNative" class="box bytes" cols=30 rows=8 autofocus>Hello</textarea>
+        <p>&nbsp;</p>
+        <p>The legacy method is using asciiToTrytes, making<br/> 2 tryte chars for each byte.</p>
+        <p>The compressed method is shifting the bits of the byte8 into an array of byte3 (0-7), so that is fits better in a tryte2 (0-8).</p>
+        <p>A good idea, but doesn't save much on length.</p>
       </div>
-      <div class="rightpane">
-        <p>Encoded as tryte6 string:</p>
-        <textarea id="txtUnicodeEncoded" class="box trytes"  cols=30 rows=8>RBTC9D9DCD</textarea>
+      <div class="pane rightpane">
+        <p>Legacy method for a tryte6 string (<span id="lenUnicodeTrytesLegacy"></span> chars):</p>
+        <textarea id="txtUnicodeEncodedLegacy" class="box trytes"  cols=30 rows=8></textarea>
+        <p>Compressed method for a tryte6 string (<span id="lenUnicodeTrytes"></span> chars):</p>
+        <textarea id="txtUnicodeEncoded" class="box trytes"  cols=30 rows=8></textarea>
       </div>
       <div style="clear: both" />
-      <p>Native Unicode text uses all bytes values, from 0 to 255, and can be converted to two tryte3 letters (9+A-Z).</p>
+    </div>
+    <div class="article">
+      <div class="title">Square pegs and round holes</div>
+      <p>The bit buckets come in sizes 1, 2, 4, 8, 16, 32, 64, etc. <br/>
+      The trit buckets come in sizes 1, 3, 9, 27, 81, 243, 729, etc.</p> 
+      <p>The IOTA asciiToTrytes .toTrytes() puts each byte into a tryte6 (0-728), which "wastes" more than half of what the tryte6 bucket can hold.</p>
       <img style="margin-left:auto;margin-right:auto;display:block" src="./images/square_peg_in_a_round_hole.png">
+      <p>Byte 0, becomes '99'; counting up 'A9', 'B9', up to the largest byte 255, which becomes 'LI'. </p>
+      <p>Any tryte from 'MI' and up to 'ZZ' cannot be converted back into a byte. Basically. because a byte cannot fit the values from 256-728.</p>
     </div>
     <div class="article">
       <div class="title">Native tryte string</div>
