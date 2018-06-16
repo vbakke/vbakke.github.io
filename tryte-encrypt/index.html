@@ -34,6 +34,7 @@
                 <option value="1">Toughness +1</option>
                 <option value="2">Toughness +2</option>
                 <option value="3">Toughness +3</option>
+                <option value="4">Toughness +4</option>
               </select>
               <button class="encrypt-seed">Encrypt</button>
             </div>
@@ -41,6 +42,7 @@
           </div>
         </div>
       </div>
+      <div id="statusMessage"></div>
       <div class="wallet">
         <canvas class="qr address-qr" width="160px" height="160px"></canvas>
         <canvas class="address-text" width="250px" height="290px" style="width:125px;height:145px"></canvas>
@@ -49,12 +51,16 @@
         <canvas class="qr seed-qr" width="160px" height="160px"></canvas>
         <div id="spinner"></div>
       </div>
-      <div id="statusMessage"></div>
       <div id="warning"></div>
       <div id="story">
+        <h2>vbakke/tryte-encrypt</h2>
         <p>This page shows the <a href="https://github.com/vbakke/tryte-encrypt">vbakke/tryte-encrypt</a> for encrypting an IOTA seed with a passphrase.</p>
         <p>Paper wallets are not safe if anyone gets hold of the piece of paper, or gets a snapshot of your screen.</p>
         <p>The vbakke/tryte-encrypt library is based on Bitcoin's BIP38 for this exact purpose, but modified to work with ternary seeds.</p>
+        <h2>Toughness</h2>
+        <p>The toughness is controlling the computational requirements for generating the binary encryption key, from the passphrase. the Standard level, is the same level as for BIP38 (that is, scrypt logN=14, r=8, p=8).</p>
+        <h2>Scanning QR codes</h2>
+        <p>Both plain and encrypted QR codes can be scanned. Encrypted codes must be decrypted before an IOTA address can be generated. </p>
       </div>
     </div>
   </div>

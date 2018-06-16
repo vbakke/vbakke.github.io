@@ -2263,8 +2263,8 @@ let googleLog = false;
 
 $(document).ready(function () {
   if (googleLog) {
-    $('#warning').addClass('warning').html('&#9888; Do not scan or enter actual seeds unless you are offline in a safe environment! &#9888;' 
-    +'<br/> You never know who is peeking.');
+    $('#warning').addClass('warning').html('&#9888; Do not scan or enter actual seeds unless you are offline in a safe environment! &#9888;'
+      + '<br/> You never know who is peeking.');
   }
   displaySeed($('.article'), 'A999TEST999SEED99999999999999999999999999999999999999999999999999999999999999999Z', true);
 
@@ -2308,7 +2308,7 @@ $(document).ready(function () {
         video.play();
         localStream = stream;
         requestAnimationFrame(tick);
-        $('#statusMessage').text("Hold a QR code infort of the camera to scan the seed");
+        $('#statusMessage').text("Hold a QR code infront of the webcamera to scan the seed");
 
       });
       // SetUp webcam - END
@@ -2393,7 +2393,11 @@ $(document).ready(function () {
     $('#statusMessage').text(decrypt ? 'Decrypting...' : 'Encrypting...');
     setTimeout(function () {
       if (decrypt) {
-        if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'decryptSeed');
+        if (googleLog && ga) {
+          let toughness = seed.substr(seed.indexOf(':'));
+          toughness = (toughness[0] == ':') ? toughness.substr(1) : '';
+          ga('send', 'event', 'tryte-encrypt', 'decryptSeed', toughness);
+        }
         trypto.decrypt(seed, passphrase, scryptOptions, function (decrypted) {
           $('#statusMessage').text('');
           if (decrypted.length == 81)
@@ -2405,7 +2409,7 @@ $(document).ready(function () {
           ///logo.spinStop();
         });
       } else {
-        if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'encryptSeed');
+        if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'encryptSeed', 'T' + scryptLevel);
         trypto.encrypt(seed, passphrase, scryptOptions, function (encrypted) {
           if (_cachedAddresses[seed]) {
             address = _cachedAddresses[seed];
@@ -2496,12 +2500,13 @@ $(document).ready(function () {
     // Draw Address
     //if (address != null) {
     drawQr($(e).find('canvas.address-qr'), address, 'L');
-    drawText($(e).find('canvas.address-text'), address, 7);
+    drawText($(e).find('canvas.address-text'), 'DEPOSIT', address, 7);
     //}
 
     // Draw Seed
+    let seedTitle = seedtype.type == 'ENCRYPTED' ? 'ENCRYPTED' : 'PRIVATE SEED';
     drawQr($(e).find('canvas.seed-qr'), seed, 'L');
-    drawText($(e).find('canvas.seed-text'), seed, 7);
+    drawText($(e).find('canvas.seed-text'), seedTitle, seed, 7);
   }
 
 
@@ -2523,31 +2528,34 @@ $(document).ready(function () {
       }
     }
   }
-
-  function drawText($canvas, text, lines) {
+  
+  function drawText($canvas, title, text, lines) {
     $canvas = $($canvas);
     lines = lines || 1;
     var fontSize = 12 * 2;
     var lineHeight = fontSize * 1.3;
-
+    var x = 2
+    
     if ($canvas && $canvas.length) {
       var canvas = $canvas[0];
       var context = canvas.getContext("2d");
       context.clearRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = '#146b64';
+      context.font = 'bold ' + fontSize*1.3 + "px Tahoma";
+      context.fillText(title, x, fontSize);
+      
       if (text) {
         context.font = 'bold ' + fontSize + "px Tahoma";
-        context.fillStyle = '#146b64';
 
         var textLength = context.measureText(text).width;
         var lineWidth = textLength / lines;
-        var lineNo = 0;
+        var lineNo = 1;
         var start = 0;
         for (var i = 1; i <= text.length; i++) {
           var subText = text.slice(start, i);
           var subLineWidth = context.measureText(subText).width;
           if (subLineWidth > lineWidth || i == text.length) {
             start = i;
-            var x = 10
             lineNo++;
             var y = lineHeight * lineNo + 10;
             context.fillText(subText, x, y);
@@ -2662,10 +2670,10 @@ if (window && window.location) {
 
     // Global site tag (gtag.js) - Google Analytics 
     (function (i, s, o, g, r, a, m) {
-    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-      (i[r].q = i[r].q || []).push(arguments)
-    }, i[r].l = 1 * new Date(); a = s.createElement(o),
-      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+      i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
     })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
     ga('create', 'UA-6677714-5', 'auto');
