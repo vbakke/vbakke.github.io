@@ -10,6 +10,7 @@ body {
   color: #30968e;
 }
 
+
 div.article {
   min-width: 660px;
 }
@@ -28,11 +29,11 @@ div.article {
   justify-content: space-between;
 }
 
-p {
+/*p {
   margin: 0px;
   padding:0px;
-  
-}
+}*/
+
 button {
   -moz-box-shadow: 2px 2px 2px 0px #014a41;
   -webkit-box-shadow: 2px 2px 2px 0px #014a41;
@@ -140,4 +141,18 @@ svg  {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.warning {
+  margin-top: 20px;
+  font-size: 20px;
+  border: solid 2px;
+  padding-left: 10px;
+  padding-bottom: 3px;
+  background-color: #8ccfc7;
+  color: #146b64;
+}
+
+#story {
+  padding-top: 20px;
 }

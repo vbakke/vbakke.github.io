@@ -11,12 +11,16 @@ const IOTACHAR = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 //var seed = 'A999TEST999SEED99999999999999999999999999999999999999999999999999999999999999999Z';
 const _cachedAddresses = {};
+let googleLog = false;
 
 $(document).ready(function () {
+  if (googleLog) {
+    $('#warning').addClass('warning').html('&#9888; Do not scan or enter actual seeds unless you are offline in a safe environment! &#9888;' 
+    +'<br/> You never know who is peeking.');
+  }
   displaySeed($('.article'), 'A999TEST999SEED99999999999999999999999999999999999999999999999999999999999999999Z', true);
 
   var logo = new Logo('assets/iota-logo.png', $('canvas.logo')[0]);
-
 
   // Event handlers
   $('textarea.seed').on('change input paste', function (e) {
@@ -25,10 +29,12 @@ $(document).ready(function () {
   });
 
   $('button.generate-seed').click(function (e) {
+    if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'generateSeed');
     displaySeed($(e.target).closest('.article'), generateSeed(), true);
   });
 
   $('button.scan-seed').click(function (e) {
+    if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'scanSeed');
     var $button = $(e.target);
     var $article = $button.closest('.article');
     if ($button.data('type') === 'CANCEL') {
@@ -80,6 +86,7 @@ $(document).ready(function () {
           // STOP VIDEO
           if ($button.data('type') == 'CANCELING') {
             //console.log('Stops scanning, canceled');
+            if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'cancelScanning');
             $button.data('type', 'SCAN');
             $button.text('Scan');
             displaySeed($('.article'));
@@ -87,6 +94,7 @@ $(document).ready(function () {
           } else if (code && code.data) {
             var seed = parseSeed(code.data);
             if (seed.type == 'PLAIN' || seed.type == 'ENCRYPTED') {
+              if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'scanedSeed', seed.type);
               $button.data('type', 'SCAN');
               $button.text('Scan');
               $('#statusMessage').text('');
@@ -137,6 +145,7 @@ $(document).ready(function () {
     $('#statusMessage').text(decrypt ? 'Decrypting...' : 'Encrypting...');
     setTimeout(function () {
       if (decrypt) {
+        if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'decryptSeed');
         trypto.decrypt(seed, passphrase, scryptOptions, function (decrypted) {
           $('#statusMessage').text('');
           if (decrypted.length == 81)
@@ -148,6 +157,7 @@ $(document).ready(function () {
           ///logo.spinStop();
         });
       } else {
+        if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'encryptSeed');
         trypto.encrypt(seed, passphrase, scryptOptions, function (encrypted) {
           if (_cachedAddresses[seed]) {
             address = _cachedAddresses[seed];
@@ -269,7 +279,7 @@ $(document).ready(function () {
   function drawText($canvas, text, lines) {
     $canvas = $($canvas);
     lines = lines || 1;
-    var fontSize = 12*2;
+    var fontSize = 12 * 2;
     var lineHeight = fontSize * 1.3;
 
     if ($canvas && $canvas.length) {
@@ -394,5 +404,23 @@ $(document).ready(function () {
     return values;
   }
 
-
 });
+
+if (window && window.location) {
+  if (window.location.host == 'vbakke.github.io') {
+    // Log visits and actions on the page. No seeds or passwords.
+    // Nevertheless, run this page offline if you are serious about you money!
+    googleLog = true;
+
+    // Global site tag (gtag.js) - Google Analytics 
+    (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-6677714-5', 'auto');
+    ga('send', 'pageview');
+  }
+}
