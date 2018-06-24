@@ -295,11 +295,11 @@ $(document).ready(function () {
       var context = canvas.getContext("2d");
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.fillStyle = '#146b64';
-      context.font = 'bold ' + fontSize*1.3 + "px Tahoma";
+      context.font = 'bold ' + fontSize*1.3 + "px Tahoma, Arial, Helvetica, sans-serif";
       context.fillText(title, x, fontSize);
       
       if (text) {
-        context.font = 'bold ' + fontSize + "px Tahoma";
+        context.font = 'bold ' + fontSize + "px Tahoma, Arial, Helvetica, sans-serif";
 
         var textLength = context.measureText(text).width;
         var lineWidth = textLength / lines;
