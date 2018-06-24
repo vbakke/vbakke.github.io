@@ -132,7 +132,7 @@ $(document).ready(function () {
     var scryptOptions = { toughness: scryptLevel, interruptStep: 3000 };
 
     //$('#spinner').addClass('spinner');
-    $('canvas.logo').css('animation-iteration-count', 'infinite');
+    //$('canvas.logo').css('animation-iteration-count', 'infinite');
     $('canvas.logo').removeClass('spinner').width();
     $('canvas.logo').addClass('spinner');
     ///var seedTranformed;
@@ -157,7 +157,8 @@ $(document).ready(function () {
           else
             $('#statusMessage').text('Incorrect passphrase (or encryption options)');
           displaySeed($article, decrypted, true);
-          $('canvas.logo').css('animation-iteration-count', 1);
+          //$('canvas.logo').css('animation-iteration-count', 1);
+          $('canvas.logo').removeClass('spinner')
           ///logo.spinStop();
         });
       } else {
@@ -168,11 +169,12 @@ $(document).ready(function () {
             delete _cachedAddresses[seed];
             _cachedAddresses[encrypted] = address;
           }
-
+          
           $('#statusMessage').text('');
           displaySeed($article, encrypted, true);
           seedTranformed = encrypted;
-          $('canvas.logo').css('animation-iteration-count', 1);
+          //$('canvas.logo').css('animation-iteration-count', 1);
+          $('canvas.logo').removeClass('spinner')
           ///logo.spinStop();
         });
       }

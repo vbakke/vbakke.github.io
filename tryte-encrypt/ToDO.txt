@@ -42,6 +42,11 @@ X Generate secure seed
  - Make multiple articles
 
 Nice features
+! Fix infinite rotation on iPad
+! Fix Cancel scan message
+! Fix Cancel button (too quick)
+! Fix font on iPad
+! Fix textarea size on iPad
 x Move buttons above, use flexboxes
 - Enhance line break 
   - Based on width
