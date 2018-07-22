@@ -24,7 +24,8 @@ X Encrypt seed
   x Extract scrypt options when scan/type
   x Extract scrypt options (in tryte/encrypt)
   x Generate scrypt options (in tryte/encrypt)
-  - Scan Address, and display it
+  x Scan Address, and display it
+  x Ignore decrypted Seeds not 81 chars
 
 X Generate IOTA address 
  x Generate address
@@ -33,6 +34,10 @@ X Generate IOTA address
 X Generate secure seed
  x Generate random seed
  x Generate secure random, using crypt
+
+X Show algorithm
+ x Display steps
+ x Update as progress goes along
 
 = Multiple seeds
 

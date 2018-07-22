@@ -19,6 +19,7 @@ $(document).ready(function () {
       + '<br/> You never know who is peeking.');
   }
   displaySeed($('.article'), 'A999TEST999SEED99999999999999999999999999999999999999999999999999999999999999999Z', true);
+  clearProgress();
 
   var logo = new Logo('assets/iota-logo.png', $('canvas.logo')[0]);
 
@@ -26,6 +27,10 @@ $(document).ready(function () {
   $('textarea.seed').on('change input paste', function (e) {
     let text = $(e.target).val();
     displaySeed($(e.target).closest('.article'), text);
+  });
+
+  $('button.show-algorithm').click(function (e) {
+    $('.progress').toggle();
   });
 
   $('button.generate-seed').click(function (e) {
@@ -92,8 +97,14 @@ $(document).ready(function () {
             displaySeed($('.article'));
             keepScanning = false;
           } else if (code && code.data) {
+            var addressIncCRC = addChecksum(code.data);
+            if (addressIncCRC) {
+              console.log('Added checksum: ', addressIncCRC);
+              code.data = addressIncCRC;
+            }
+
             var seed = parseSeed(code.data);
-            if (seed.type == 'PLAIN' || seed.type == 'ENCRYPTED') {
+            if (seed.type == 'PLAIN' || seed.type == 'ENCRYPTED' || seed.type == 'ADDRESS') {
               if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'scanedSeed', seed.type);
               $button.data('type', 'SCAN');
               $button.text('Scan');
@@ -102,11 +113,10 @@ $(document).ready(function () {
               keepScanning = false;
               setTimeout(() => {
                 //console.log('SEED');
-                _cachedAddresses
-                displaySeed($article, code.data, true);
+                displaySeed($article, seed, true);
               }, 700);
               //console.log('Stops scanning, found seed');
-            }
+            } 
           }
         }
 
@@ -135,7 +145,7 @@ $(document).ready(function () {
     //$('canvas.logo').css('animation-iteration-count', 'infinite');
     $('canvas.logo').removeClass('spinner').width();
     $('canvas.logo').addClass('spinner');
-    ///var seedTranformed;
+    var seedTranformed;
     ///logo.spinStart(2000, () => {
     ///  if (seedTranformed)
     ///    displaySeed($article, seedTranformed, true);
@@ -143,6 +153,8 @@ $(document).ready(function () {
 
     var decrypt = $button.data('type') == 'DECRYPT';
     $('#statusMessage').text(decrypt ? 'Decrypting...' : 'Encrypting...');
+    clearProgress();
+    displayModeElements( (decrypt) ? 'decrypt' : 'encrypt' );
     setTimeout(function () {
       if (decrypt) {
         if (googleLog && ga) {
@@ -152,15 +164,16 @@ $(document).ready(function () {
         }
         trypto.decrypt(seed, passphrase, scryptOptions, function (decrypted) {
           $('#statusMessage').text('');
-          if (decrypted.length == 81)
+          if (decrypted.length == 81) {
             seedTranformed = decrypted;
-          else
+            displaySeed($article, decrypted, true);
+          } else {
             $('#statusMessage').text('Incorrect passphrase (or encryption options)');
-          displaySeed($article, decrypted, true);
+          }
           //$('canvas.logo').css('animation-iteration-count', 1);
           $('canvas.logo').removeClass('spinner')
           ///logo.spinStop();
-        });
+        }, onProgress);
       } else {
         if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'encryptSeed', 'T' + scryptLevel);
         trypto.encrypt(seed, passphrase, scryptOptions, function (encrypted) {
@@ -169,14 +182,14 @@ $(document).ready(function () {
             delete _cachedAddresses[seed];
             _cachedAddresses[encrypted] = address;
           }
-          
+
           $('#statusMessage').text('');
           displaySeed($article, encrypted, true);
           seedTranformed = encrypted;
           //$('canvas.logo').css('animation-iteration-count', 1);
           $('canvas.logo').removeClass('spinner')
           ///logo.spinStop();
-        });
+        }, onProgress);
       }
       //$('#spinner').removeClass('spinner');
       //$('canvas.logo').removeClass('spinner');
@@ -185,19 +198,105 @@ $(document).ready(function () {
   });
 
   // View functions
+  function startSpinner() {
+
+  }
+  function stopSpinner() {
+
+  }
+  function showProgress(mode) {
+    $('.progress').show();
+  }
+  function hideProgress() {
+    $('.progress').hide();
+  }
+
+  var progressArray = [];
+  function clearProgress() {
+    progressArray = [];
+    var $progress = $('#progress');
+    $progress.find('.timing').text('');
+    $progress.find('.value').text('');
+    $progress.find('.length').text('');
+    displayModeElements('encrypt');
+  }
+  function onProgress(progress) {
+    progress.timestamp = Date.now();
+    progress.duration = (progressArray.length == 0) ? 0 : Math.max(1, progress.timestamp - progressArray[progressArray.length-1].timestamp);
+    progressArray.push(progress);
+    displayProgress(progress);
+  }
+
+  function displayProgress(progress) {
+    //console.log('Progress:', progress.stage, progress);
+    var $progress = $('#progress');
+    // Display step info
+    var $div = $progress.find('#step' + progress.stage);
+    if ($div.length) {
+      $div.find('.timing').text(progress.duration+' ms');
+    }
+    // Display stage info
+    var $div = $progress.find('#stage' + progress.stage);
+    if ($div.length) {
+      var content = parseStageContent(progress.value);
+      $div.find('.value').text(content.value);
+      $div.find('.length').text(content.length);
+    }
+    if (progress.stage=='T') {
+      $progress.find('#stepP2 .explanation').text('Parameters: logN: '+progress.value.logN+', p: '+progress.value.p+', r: '+progress.value.r);
+    }
+  }
+  function parseStageContent(content) {
+    var parsed = {};
+    if (typeof content === 'string') {
+      parsed.length = content.length + ' chars';
+      parsed.value = content;
+    } else {
+      var bytes = [];
+      for (let i = 0; i < content.length; i++) {
+        bytes.push(parseInt(content[i]));
+      }
+      parsed.length = bytes.length + ' bytes, ' + bytes.length * 8 + ' bits';
+      parsed.value = bytes.join(', ');
+
+    }
+    return parsed;
+  }
+
+  function displayModeElements(mode) {
+    var $elements = $('.mode-element');
+
+    $('.mode-element').filter('[data-mode="'+mode+'"]').show();
+    $('.mode-element').not('[data-mode="'+mode+'"]').hide();
+
+  }
+
   function displaySeed(e, seed, updateInputField) {
     if (!seed) {
       seed = $(e).find('textarea.seed').val();
     }
+    if (typeof seed == 'string') {
+      seed = parseSeed(seed);
+    }
+    
     if (updateInputField) {
       $input = $(e).find('textarea.seed');
       if ($input.length) {
-        $input.val(seed);
+        $input.val(seed.value);
       }
     }
+
+    setTimeout(displayWallet, 10, e, seed);
+  }
+
+  function displayWallet(e, seed) {
+    
     let $select = $(e).find('.scrypt-T');
-    if (seed.indexOf(':') > -1) {
-      let opts = seed.split(':')[1];
+    if(seed.type == 'ADDRESS') {
+      $select.children(':first').text('Standard');
+      $select.attr('disabled', 'disabled');
+    } else if (seed.value.indexOf(':') > -1) {
+      let opts = seed.value.split(':')[1];
       if (opts[0] == 'T' && $select.children("[value='" + opts.substr(1) + "']").length) {
         $select.val(opts[1]);
       } else {
@@ -209,42 +308,53 @@ $(document).ready(function () {
       $select.children(':first').text('Standard');
       $select.removeAttr('disabled');
     }
-
-
-
+    
+    
+    
     let $seedTitle = $(e).find('.seedTitle');
-
-    var address = null;
-    var seedtype = parseSeed(seed);
     var $butEncrypt = $(e).find('button.encrypt-seed');
     var emptyPassphrase = ($(e).find('textarea.passphrase').val().trim() == '');
-    if (seedtype.type == 'ENCRYPTED') {
+    var seedValue = null;
+    var address = null;
+    var seedTitle = "";
+    var addressTitle = 'DEPOSIT';
+    if (seed.type == 'ADDRESS') {
+      $seedTitle.text('Address:');
+      $butEncrypt.text('Encrypt');
+      $butEncrypt.data('type', 'DECRYPT');
+      $butEncrypt.attr('disabled', 'disabled');
+      addressTitle = 'ADDRESS';
+      address = seed.value;
+    } 
+    else if (seed.type == 'ENCRYPTED') {
       $seedTitle.text('Encrypted seed:');
-      $butEncrypt.text('Decrypt');
       $butEncrypt.text('Decrypt');
       $butEncrypt.data('type', 'DECRYPT');
       $butEncrypt.prop('disabled', emptyPassphrase);
-      address = (_cachedAddresses[seed]) ? _cachedAddresses[seed] : "";
-
+      address = (_cachedAddresses[seed.value]) ? _cachedAddresses[seed.value] : "";
+      seedTitle = 'ENCRYPTED';
+      seedValue = seed.value;
     } else {
       $seedTitle.text('Seed:');
       $butEncrypt.text('Encrypt');
       $butEncrypt.data('type', 'ENCRYPT');
-      $butEncrypt.prop('disabled', emptyPassphrase || seedtype.type != 'PLAIN');
-      if (seedtype.type == 'PLAIN') {
-        if (_cachedAddresses[seed]) {
-          address = _cachedAddresses[seed];
+      $butEncrypt.prop('disabled', emptyPassphrase || seed.type != 'PLAIN');
+      if (seed.type == 'PLAIN') {
+        if (_cachedAddresses[seed.value]) {
+          address = _cachedAddresses[seed.value];
         } else {
-          address = generateAddress(seed);
-          _cachedAddresses[seed] = address;
+          address = generateAddress(seed.value);
+          _cachedAddresses[seed.value] = address;
         }
-        $('#statusMessage').text('')
+        $('#statusMessage').text('');
+        seedTitle = 'PRIVATE SEED';
+        seedValue = seed.value;
       } else {
         var msg = '';
-        if (seedtype.illegal.length)
-          msg += seed.length + ' characters';
-        if (seedtype.illegal.character)
-          msg += 'Illegal character';
+        if (seed.illegal.length)
+        msg += seed.value.length + ' characters';
+        if (seed.illegal.character)
+        msg += 'Illegal character';
         $seedTitle.text('Invalid seed: ' + msg);
         $('#statusMessage').text('Not a valid IOTA seed')
       }
@@ -252,15 +362,12 @@ $(document).ready(function () {
 
 
     // Draw Address
-    //if (address != null) {
     drawQr($(e).find('canvas.address-qr'), address, 'L');
-    drawText($(e).find('canvas.address-text'), 'DEPOSIT', address, 7);
-    //}
+    drawText($(e).find('canvas.address-text'), addressTitle, address, 7);
 
     // Draw Seed
-    let seedTitle = seedtype.type == 'ENCRYPTED' ? 'ENCRYPTED' : 'PRIVATE SEED';
-    drawQr($(e).find('canvas.seed-qr'), seed, 'L');
-    drawText($(e).find('canvas.seed-text'), seedTitle, seed, 7);
+    drawQr($(e).find('canvas.seed-qr'), seedValue, 'L');
+    drawText($(e).find('canvas.seed-text'), seedTitle, seedValue, 7);
   }
 
 
@@ -282,22 +389,22 @@ $(document).ready(function () {
       }
     }
   }
-  
+
   function drawText($canvas, title, text, lines) {
     $canvas = $($canvas);
     lines = lines || 1;
     var fontSize = 12 * 2;
     var lineHeight = fontSize * 1.3;
     var x = 2
-    
+
     if ($canvas && $canvas.length) {
       var canvas = $canvas[0];
       var context = canvas.getContext("2d");
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.fillStyle = '#146b64';
-      context.font = 'bold ' + fontSize*1.3 + "px Tahoma, Arial, Helvetica, sans-serif";
+      context.font = 'bold ' + fontSize * 1.3 + "px Tahoma, Arial, Helvetica, sans-serif";
       context.fillText(title, x, fontSize);
-      
+
       if (text) {
         context.font = 'bold ' + fontSize + "px Tahoma, Arial, Helvetica, sans-serif";
 
@@ -340,7 +447,7 @@ $(document).ready(function () {
   // ====================
 
   function parseSeed(seed) {
-    var state = { type: 'UNKNOWN', illegal: {} };
+    var state = { type: 'UNKNOWN', illegal: {}, value: seed };
     seed = seed.trim();
     var parts = seed.split(':');
     seed = parts[0];
@@ -373,10 +480,18 @@ $(document).ready(function () {
 
   function generateAddress(seed) {
     var address;
-    iota.api.getNewAddress(seed, { total: 1 }, (err, addr) => {
+    iota.api.getNewAddress(seed, { total: 1, checksum: true, index: 0 }, (err, addr) => {
       address = addr[0];
     });
     return address;
+  }
+
+  function addChecksum(address) {
+    try {
+      return iota.utils.addChecksum(address);
+    } catch (err) {
+      return "";
+    }
   }
 
 
