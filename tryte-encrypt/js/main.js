@@ -100,11 +100,13 @@ $(document).ready(function () {
             displaySeed($('.article'));
             keepScanning = false;
           } else if (code && code.data) {
+            /*
             var addressIncCRC = addChecksum(code.data);
             if (addressIncCRC) {
               console.log('Added checksum: ', addressIncCRC);
               code.data = addressIncCRC;
             }
+            */
 
             var seed = parseSeed(code.data);
             if (seed.type == 'PLAIN' || seed.type == 'ENCRYPTED' || seed.type == 'ADDRESS') {
