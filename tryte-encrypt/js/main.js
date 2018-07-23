@@ -30,6 +30,9 @@ $(document).ready(function () {
   });
 
   $('button.show-algorithm').click(function (e) {
+    var action = ($('.progress:visible').length) ? 'hide' : 'show';
+    if (googleLog && ga) ga('send', 'event', 'tryte-encrypt', 'show-algorithm', action);
+    
     $('.progress').toggle();
   });
 
