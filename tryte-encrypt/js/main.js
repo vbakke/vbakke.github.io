@@ -8,6 +8,7 @@ var Logo = require('./logo.js');
 
 const iota = new IOTA({});
 const IOTACHAR = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const tangleUrl = 'https://thetangle.org/address/';
 
 //var seed = 'A999TEST999SEED99999999999999999999999999999999999999999999999999999999999999999Z';
 const _cachedAddresses = {};
@@ -369,6 +370,7 @@ $(document).ready(function () {
     // Draw Address
     drawQr($(e).find('canvas.address-qr'), address, 'L');
     drawText($(e).find('canvas.address-text'), addressTitle, address, 7);
+    $('#tangleExplorer').html('Explore the address at <a href="'+tangleUrl+address+'">thetangle.org</a>.');
 
     // Draw Seed
     drawQr($(e).find('canvas.seed-qr'), seedValue, 'L');
