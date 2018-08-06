@@ -513,6 +513,7 @@ $(document).ready(function () {
     // Draw Address
     drawQr($(e).find('canvas.address-qr'), address, 'L');
     drawText($(e).find('canvas.address-text'), addressTitle, address, 7);
+    $('#tangleExplorer').html('Explore the address at <a href="'+tangleUrl+address+'">thetangle.org</a>.');
 
     // Draw Seed
     drawQr($(e).find('canvas.seed-qr'), seedValue, 'L');
