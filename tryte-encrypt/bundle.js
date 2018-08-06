@@ -152,6 +152,7 @@ var Logo = require('./logo.js');
 
 const iota = new IOTA({});
 const IOTACHAR = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const tangleUrl = 'https://thetangle.org/address/';
 
 //var seed = 'A999TEST999SEED99999999999999999999999999999999999999999999999999999999999999999Z';
 const _cachedAddresses = {};
