@@ -198,9 +198,9 @@ body {
   padding-top: 20px;
 }
 
-button.show-algorithm {
+/* button.show-algorithm {
   padding: 5px;
-}
+} */
 
 .input.seed {
   width: 400px;
