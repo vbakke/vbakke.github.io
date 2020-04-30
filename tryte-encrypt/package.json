@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "iota.lib.js": "^0.4.7",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "jsqr": "^1.0.4",
     "qrcode": "^1.2.0",
     "tryte-encrypt": "^2.1.0",
