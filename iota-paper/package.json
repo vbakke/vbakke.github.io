@@ -1,0 +1,15 @@
+{
+  "name": "iota-paper-github-io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "xcopy node_modules\\iota-paper\\index.html . /Y && xcopy node_modules\\iota-paper\\bundle.js . /Y && xcopy node_modules\\iota-paper\\css\\*.css css\\ /Y && xcopy node_modules\\iota-paper\\assets assets\\ /Y"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "iota-paper": "^1.0.1"
+  }
+}
