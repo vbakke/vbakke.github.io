@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="./src/main.css">
+    <link rel="stylesheet" href="./src/filter.css">
+    <script src="./src/app.js"></script>
+    <script src="./src/filter.js"></script>
+</head>    
+<body>
+    <button autofocus onclick="show_data()">Fetch</button>
+    <div class="filters">
+        <div class="filter">
+            Weekday
+            <div class="filter-weekday hflex  locale-no-us">
+                <div class="weekday en-us">S<br/><input type="checkbox" name="filter-weekday" value="0"></div>
+                <div class="weekday">M<br/><input type="checkbox" name="filter-weekday" value="1"></div>
+                <div class="weekday">T<br/><input type="checkbox" name="filter-weekday" value="2"></div>
+                <div class="weekday">W<br/><input type="checkbox" name="filter-weekday" value="3"></div>
+                <div class="weekday">T<br/><input type="checkbox" name="filter-weekday" value="4"></div>
+                <div class="weekday">F<br/><input type="checkbox" name="filter-weekday" value="5"></div>
+                <div class="weekday">S<br/><input type="checkbox" name="filter-weekday" value="6"></div>
+                <div class="weekday no-us">S<br/><input type="checkbox" name="filter-weekday" value="0"></div>
+            </div>
+        </div>
+        <div class="filter">
+            Time
+            <div class="filter-time">
+                <input type="range" name="filter-time" min="0" max="24" id="filter-time-from" value="0">
+                <input type="range" name="filter-time" min="0" max="24" id="filter-time-to" value="24">
+            </div>
+        </div>
+        <div class="filter">
+            Level
+            <div class="filter-level">
+                <input type="number" name="filter-level" id="filter-level">
+            </div>
+        </div>
+    </div>
+
+    <div class="result">
+    </div>
+</body>
+</html>

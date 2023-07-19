@@ -1,0 +1,19 @@
+
+.hflex {
+    display: flex;
+    flex-direction: row;
+}
+
+a {
+    text-decoration: none;
+}
+
+.weekday {
+    text-align: center;
+}
+
+.filter-weekday.locale-us .no-us,
+.filter-weekday.locale-no-us .en-us {
+        display: none;
+}
+
