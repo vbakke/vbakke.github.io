@@ -172,7 +172,7 @@ function template_replace(template, attributes) {
                     value = dt_format.format(new Date(value));
                 }
                 if (format == ':z') {
-                    value = (new Date(value)).getTimezoneOffset()/60 + 'UTC';
+                    value = -(new Date(value)).getTimezoneOffset()/60 + ':00 UTC';
                 }
                 template = template.replace('{' + key + format + '}', value);
             }

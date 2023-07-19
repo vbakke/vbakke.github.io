@@ -2,8 +2,10 @@
 <head>
     <link rel="stylesheet" href="./src/main.css">
     <link rel="stylesheet" href="./src/filter.css">
+    <link rel="stylesheet" href="./src/slider_dual.css">
     <script src="./src/app.js"></script>
     <script src="./src/filter.js"></script>
+    <script src="./src/slider_dual.js"></script>
 </head>    
 <body>
     <button autofocus onclick="show_data()">Fetch</button>
@@ -22,10 +24,12 @@
             </div>
         </div>
         <div class="filter">
-            Time
+            Time <span class="filter-time-value">00:00 - 24:00</span>
             <div class="filter-time">
-                <input type="range" name="filter-time" min="0" max="24" id="filter-time-from" value="0">
-                <input type="range" name="filter-time" min="0" max="24" id="filter-time-to" value="24">
+                <div class="slider-dual">
+                    <input type="range" name="filter-time" min="0" max="24" class="from" id="filter-time-from" value="0">
+                    <input type="range" name="filter-time" min="0" max="24" class="to" id="filter-time-to" value="24">
+                </div>                
             </div>
         </div>
         <div class="filter">
