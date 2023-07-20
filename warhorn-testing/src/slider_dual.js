@@ -1,5 +1,5 @@
 
-const awakeColor = '#ffe600';
+const awakeColor = '#eeeeee';
 const sleepColor = '#bababa';
 
 addEventListener("DOMContentLoaded", async (event) => {

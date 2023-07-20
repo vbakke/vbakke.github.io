@@ -37,7 +37,7 @@ async function fetch_template() {
 async function fetch_data() {
     let url = './mock-api/session-listings.json';
     // url = 'https://warhorn.net/api/session-listings?filter%5Bstatus%5D=published&filter%5Bvisible%5D=true&filter%5BgameSystemId%5D=61&filter%5Bonline%5D=true&filter%5Blanguage%5D=en&filter%5BstartsAtOrAfter%5D={ISO_NOW}&filter%5BvirtualTableTop%5D=foundry&include=campaignMode%2Cscenario.campaign.gameSystem%2Cscenario.campaignTags%2Cscenario.factions%2Cscenario.gameSystem%2CvirtualTableTops%2CvoiceChatServices&page%5Bnumber%5D=1&page%5Bsize%5D=25&sort=dates';
-    url = 'https://warhorn.net/api/session-listings?filter%5Bstatus%5D=published&filter%5Bvisible%5D=true&filter%5BgameSystemId%5D=61&filter%5Bonline%5D=true&filter%5Blanguage%5D=en&filter%5BstartsAtOrAfter%5D={ISO_NOW}&include=campaignMode%2Cscenario.campaign.gameSystem%2Cscenario.campaignTags%2Cscenario.factions%2Cscenario.gameSystem%2CvirtualTableTops%2CvoiceChatServices&page%5Bnumber%5D=1&page%5Bsize%5D=25&sort=dates';
+    url = 'https://warhorn.net/api/session-listings?filter%5Bstatus%5D=published&filter%5Bvisible%5D=true&filter%5Bonline%5D=true&filter%5Blanguage%5D=en&filter%5BstartsAtOrAfter%5D={ISO_NOW}&include=campaignMode%2Cscenario.campaign.gameSystem%2Cscenario.campaignTags%2Cscenario.factions%2Cscenario.gameSystem%2CvirtualTableTops%2CvoiceChatServices&page%5Bnumber%5D=1&page%5Bsize%5D=25&sort=dates';
     url = url.replace('{ISO_NOW}', (new Date()).toISOString());
 
     const response = await fetch(url);
